@@ -7,7 +7,24 @@ def dprint(text):
     if DEBUG:
         print(text)
 
-def collectTablesFromUrl(url):
+def collectPgnsFromUrl(url):
+    """Collect all pgns from a chessgames.com database query, from various sources
+
+    Args:
+        url (string): url of chessgames.com table
+    """
+    tableUrls = collectTableUrlsFromUrl(url)
+    pgns = []
+    gids = set()
+    for tableUrl in tableUrls:
+        newIds = collectChessGameIdsFromTable(tableUrl)
+        gids.update(newIds)
+        
+    for gid in gids:
+        pgns.append(getPgnFromId(gid))
+    return pgns
+
+def collectTableUrlsFromUrl(url):
     """Get a list of chessgame table urls from a tournament, opening, or other list view
 
     Args:
@@ -16,13 +33,13 @@ def collectTablesFromUrl(url):
         list(str): a list of urls that contain chessgames.com tables with all relevant games
     """
 
-    tableHtml = requests.get(url)
-    numPages = re.search("page [0-9]+ of ([0-9]+)", tableHtml)
+    tableHtml = requests.get(url).text
+    numPages = int(re.search("page [0-9]+ of ([0-9]+)", tableHtml).group(1))
 
     formattedUrl = re.sub(r"page=[0-9]+&?","",url)
     #this formatted URL makes sure there is no page argument in the base url
 
-    urls = [formattedUrl+"&page="+str(x+1) for x in range(numpages) ]
+    urls = [formattedUrl+"&page="+str(x+1) for x in range(numPages)]
 
     return urls
 
@@ -49,7 +66,7 @@ def collectPgnsFromTable(url):
     """Get the pgn strings from a list of chessgames.com table
 
     Args:
-        url (string): url of chessgames.com list
+        url (string): url of chessgames.com table
     Returns:
         list(str): A list of pgns
     """
@@ -82,3 +99,5 @@ def getPgnFromId(gid):
     url = "https://www.chessgames.com/nodejs/game/viewGamePGN?text=1&gid=" + gid
     pgn = requests.get(url).text
     return pgn
+
+
