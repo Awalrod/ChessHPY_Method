@@ -62,30 +62,30 @@ def collectChessGameIdsFromTable(url):
         
     return gids
 
-def collectPgnsFromTable(url):
-    """Get the pgn strings from a list of chessgames.com table
+# def collectPgnsFromTable(url):
+#     """Get the pgn strings from a list of chessgames.com table
 
-    Args:
-        url (string): url of chessgames.com table
-    Returns:
-        list(str): A list of pgns
-    """
+#     Args:
+#         url (string): url of chessgames.com table
+#     Returns:
+#         list(str): A list of pgns
+#     """
 
-    gids = collectChessGameIdsFromTable(url)
-    dprint("Processing "+ str(len(gids))+ " gids")
-    dprint(gids)
+#     gids = collectChessGameIdsFromTable(url)
+#     dprint("Processing "+ str(len(gids))+ " gids")
+#     dprint(gids)
 
-    pgns = []
-    for gid in gids:
-        dprint(type(gid))
-        dprint(gid)
-        pgns.append(getPgnFromId(gid))
+#     pgns = []
+#     for gid in gids:
+#         dprint(type(gid))
+#         dprint(gid)
+#         pgns.append(getPgnFromId(gid))
     
-    return pgns
+#     return pgns
 
 
 
-#https://www.chessgames.com/nodejs/game/viewGamePGN?text=1&gid=2941121
+
 def getPgnFromId(gid):
     """Get the pgn text from a chessgames.com game id
 
