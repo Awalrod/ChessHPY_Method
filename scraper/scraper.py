@@ -7,11 +7,26 @@ def dprint(text):
     if DEBUG:
         print(text)
 
+
+def completePgnStringFromUrl(url):
+    """Return a complete set of PGNs as one string instead of a list
+
+    Args:
+        url (string): url of chessgames.com table
+    Returns:
+        string: a concatenated pgn file
+    """
+    pgnList = collectPgnsFromUrl(url)
+
+    return "\n\n".join(pgnList)
+
 def collectPgnsFromUrl(url):
     """Collect all pgns from a chessgames.com database query, from various sources
 
     Args:
         url (string): url of chessgames.com table
+    Returns:
+        list (string): a list of pgns
     """
     tableUrls = collectTableUrlsFromUrl(url)
     pgns = []
@@ -61,30 +76,6 @@ def collectChessGameIdsFromTable(url):
         gids.add(result.group(1))
         
     return gids
-
-# def collectPgnsFromTable(url):
-#     """Get the pgn strings from a list of chessgames.com table
-
-#     Args:
-#         url (string): url of chessgames.com table
-#     Returns:
-#         list(str): A list of pgns
-#     """
-
-#     gids = collectChessGameIdsFromTable(url)
-#     dprint("Processing "+ str(len(gids))+ " gids")
-#     dprint(gids)
-
-#     pgns = []
-#     for gid in gids:
-#         dprint(type(gid))
-#         dprint(gid)
-#         pgns.append(getPgnFromId(gid))
-    
-#     return pgns
-
-
-
 
 def getPgnFromId(gid):
     """Get the pgn text from a chessgames.com game id
