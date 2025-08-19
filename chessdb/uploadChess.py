@@ -2,9 +2,9 @@ import pymongo
 import sys
 import chess.pgn
 import chess
-# myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 
-# mydb = myclient["mydatabase"]
+MONGO_CON_STRING = "mongodb://localhost:27017/"
+APP_DB_NAME = "chesshpy"
 
 def getGamesFromFile(pgnFile):
     """Get a list of games from an opened pgn file
@@ -37,7 +37,7 @@ def convertGameToMongoDoc(game):
     gtmList = []
     #Guess The Move
     board = game.board()
-    
+
     prevMoveDoc = None
     for nextMove in game.mainline_moves():
         fen = board.fen()
@@ -57,10 +57,40 @@ def convertGameToMongoDoc(game):
 
     return gameDoc
 
+def uploadToMongo(gameDocs, dbName, collectionName):
+    """Uploads a list of pre-processed games to mongo
+
+    Args:
+        gameDocs (list[dict]): a list of dictionaries representing games
+        dbName (str): database name
+        collectionName(str): collection name
+    """
+    client = pymongo.MongoClient(MONGO_CON_STRING)
+
+    db = client[dbName]
+
+    col = db[collectionName]
+
+    col.insert_many(gameDocs)
+
+def convertPgnsToCollection(pgnFilePath, collectionName):
+    """Convert a pgn file to a mongo game collections
+
+    Args:
+        pgnFile (str): A path to a pgn file
+        collectionName (str): what do we call this collection of games
+    """
+    pgnFile = open(pgnFilePath,"r")
+    games = getGamesFromFile(pgnFile)
+    gameDocs = map(convertGameToMongoDoc, games)
+
+    uploadToMongo(gameDocs, APP_DB_NAME, collectionName)
+
+
 def main():
     if len(sys.argv) != 3:
         print ("Usage: ")
-        print("python3 uploadChess.py <filename.pgn> <databasename>")
+        print("python3 uploadChess.py <filename.pgn> <collectionName>")
         return (1)
 
     filename = sys.argv[1]
@@ -68,8 +98,7 @@ def main():
         print ("WARNING: file does not end with .pgn")
         print("Uploading anyway...")
     
-    pgnFile = open(filename,'r')
-    games = getGamesFromFile(pgnFile)
+    convertPgnsToCollection(filename, sys.argv[2])
 
 
 if __name__ == "__main__":
