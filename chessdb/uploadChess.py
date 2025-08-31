@@ -2,9 +2,7 @@ import pymongo
 import sys
 import chess.pgn
 import chess
-
-MONGO_CON_STRING = "mongodb://localhost:27017/"
-APP_DB_NAME = "chesshpy"
+from chessdb.constants import MONGO_CON_STRING, APP_DB_NAME
 
 def getGamesFromFile(pgnFile):
     """Get a list of games from an opened pgn file
