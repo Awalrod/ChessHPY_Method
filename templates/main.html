@@ -11,30 +11,37 @@
     <link href="static/css/chessboard-1.0.0.css" rel="stylesheet">
   </head>
   <body>
-    <div class = "row">
+    {% include "navbar.html" %}
+    <div class="row p-3">
       <div class="col">
-        <div id="myBoard" style="width: 500px"></div>
+        <div id="myBoard" style="width: 500px" class="mx-auto text-center"></div>
       </div>
       <div class="col">
-        Here would be a set of Timer? I guess. Maybe some navigational doodads.
+         <form>
+          <div class="form-group">
+            <label for="positionNotes">Notes on Position</label>
+            <textarea rows="10" class="form-control" id="positionNotes" aria-describedby="notesOnPosition" autocomplete="off"> </textarea>
+            <small id="notesOnPosition" class="form-text text-muted">Input your thoughts on the position, including concrete continuations and chosen moves</small>
+          </div>
+        </form>
       </div>
     </div>
-    <div class="row">
+    <div class="row p-3">
       <div class="col">
-        I think here should be an input box
+       
       </div>
     </div>
     <script src=" https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js "></script>
     <script src="static/js/jquery-3.4.1.min.js"></script>
     <script src="static/js/chessboard-1.0.0.js"></script>
     <script>
-    // --- Begin Example JS --------------------------------------------------------
+
     var allGames = {{ allGames|tojson|safe }};
 
     game = allGames[0]
     position = allGames[0].positions[16]
 
-    
+
     var config = {
         pieceTheme: 'static/img/chesspieces/wikipedia/{piece}.png',
         position: position.fen
@@ -46,7 +53,30 @@
 
     $('#myBoard').find('.square-' + from).addClass('highlight')
     $('#myBoard').find('.square-' + to).addClass('highlight')
-    // --- End Example JS ----------------------------------------------------------
+
+//    $('#positionNotes').onkeydown = function(e) { // listen for when any key is pressed
+//     if (e.keyCode === 9) { // block to catch when tab key is pressed
+//      console.log(e.keyCode)
+//      this.setRangeText(
+//        '\t',
+//        this.selectionStart,
+//        this.selectionStart,
+//        'end')
+//      return false; //prevent default action
+//     }
+//     console.log(e.keyCode)
+//    };
+    $('#positionNotes').on("keydown", function (event) {
+      if ( event.which == 9 ) {
+       event.preventDefault();
+       this.setRangeText(
+        '\t',
+        this.selectionStart,
+        this.selectionStart,
+        'end')
+      }
+      //console.log(event.which)
+    });
     </script>
   </body>
 </html>
